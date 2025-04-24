@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 
 interface User {
   id: string;
@@ -30,26 +29,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check if user is logged in
     const token = localStorage.getItem('token');
     if (token) {
-      // Verify token and get user data
-      // This would be an API call in a real app
-      setLoading(false);
-    } else {
-      setLoading(false);
+      // For demo purposes, we'll just set a mock user
+      setUser({
+        id: '1',
+        username: 'demo',
+        email: 'demo@example.com',
+      });
     }
+    setLoading(false);
   }, []);
 
   const login = async (username: string, password: string) => {
     try {
       setLoading(true);
       setError(null);
-      // This would be an API call in a real app
-      const response = await axios.post('/api/auth/login', { username, password });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setUser(user);
+      
+      // For demo purposes, we'll just accept any non-empty credentials
+      if (username && password) {
+        const mockUser = {
+          id: '1',
+          username,
+          email: `${username}@example.com`,
+        };
+        localStorage.setItem('token', 'mock-token');
+        setUser(mockUser);
+      } else {
+        throw new Error('Please enter both username and password');
+      }
     } catch (err) {
-      setError('Invalid credentials');
-      throw err;
+      setError(err instanceof Error ? err.message : 'An error occurred during login');
     } finally {
       setLoading(false);
     }
@@ -59,14 +67,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       setError(null);
-      // This would be an API call in a real app
-      const response = await axios.post('/api/auth/register', { username, email, password });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setUser(user);
+      
+      // For demo purposes, we'll just accept any non-empty credentials
+      if (username && email && password) {
+        const mockUser = {
+          id: '1',
+          username,
+          email,
+        };
+        localStorage.setItem('token', 'mock-token');
+        setUser(mockUser);
+      } else {
+        throw new Error('Please fill in all fields');
+      }
     } catch (err) {
-      setError('Registration failed');
-      throw err;
+      setError(err instanceof Error ? err.message : 'An error occurred during registration');
     } finally {
       setLoading(false);
     }

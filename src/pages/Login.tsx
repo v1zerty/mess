@@ -51,26 +51,16 @@ const Button = styled.button`
   }
 `;
 
-const Error = styled.div`
+const ErrorMessage = styled.div`
   color: ${({ theme }) => theme.colors.error};
   margin-bottom: ${({ theme }) => theme.spacing.md};
   text-align: center;
 `;
 
-const SwitchLink = styled.div`
-  text-align: center;
-  color: ${({ theme }) => theme.colors.primary};
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login, error } = useAuth();
+  const { login, error, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,15 +69,15 @@ const Login: React.FC = () => {
       await login(username, password);
       navigate('/messenger');
     } catch (err) {
-      console.error('Login failed:', err);
+      // Error is handled by AuthContext
     }
   };
 
   return (
     <LoginContainer>
       <LoginForm onSubmit={handleSubmit}>
-        <Title>Welcome to Fataew</Title>
-        {error && <Error>{error}</Error>}
+        <Title>Login</Title>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <Input
           type="text"
           placeholder="Username"
@@ -102,10 +92,9 @@ const Login: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <Button type="submit">Login</Button>
-        <SwitchLink onClick={() => navigate('/register')}>
-          Don't have an account? Register
-        </SwitchLink>
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Loading...' : 'Login'}
+        </Button>
       </LoginForm>
     </LoginContainer>
   );
